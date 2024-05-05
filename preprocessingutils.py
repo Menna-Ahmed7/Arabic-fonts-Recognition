@@ -143,11 +143,11 @@ def rotate_img(img):
     if lines is not None:
         for line in lines:
             x1, y1, x2, y2 = line[0]
-        # Calculate line length using distance formula
-        length = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-        if length > max_length:
-            max_length = length
-            longest_line = line
+            # Calculate line length using distance formula
+            length = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+            if length > max_length:
+                max_length = length
+                longest_line = line
 
         if longest_line is not None:
             x1, y1, x2, y2 = longest_line[0]
@@ -156,16 +156,17 @@ def rotate_img(img):
                  orientation = np.arctan((y2 - y1) / (x2 - x1))*180  # Radians
             else:
                 orientation = 180/2  # Vertical line (slope is undefined)
-        
-        # print(orientation)
-        # Draw only the longest line (if any)
-        # if longest_line is not None:
-        #     x1, y1, x2, y2 = longest_line[0]
-        #     cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)  # Draw blue line with thickness 2
-            print("oo",orientation)
+            # print("oo",orientation)
             if (orientation>20.0 or orientation<-20):
                 orientation=round_to_angle_multiples(orientation)
                 finalImage = rotate(img, 180-orientation)
+        
+        # # print(orientation)
+        # # Draw only the longest line (if any)
+        # if longest_line is not None:
+        #     x1, y1, x2, y2 = longest_line[0]
+        #     cv2.line(img, (x1, y1), (x2, y2), (255, 255, 255), 2)  # Draw blue line with thickness 2
+        #     display(img,"box")
 
     return finalImage
     # print(orientation)
@@ -183,6 +184,8 @@ def preprocess(image_path):
     edges = cv2.Canny(img, 50, 150)  # Adjust threshold values as needed
 
     rotated_img=rotate_img(edges)
+
+    # display(rotated_img)
 
     #Binarize the gradient image
     _, img = cv2.threshold(rotated_img, 50.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
