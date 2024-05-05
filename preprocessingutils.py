@@ -162,7 +162,7 @@ def rotate_img(img):
     #     x1, y1, x2, y2 = longest_line[0]
     #     cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)  # Draw blue line with thickness 2
     finalImage=img
-    # print(orientation)
+    print("oo",orientation)
     if (orientation>20.0 or orientation<-20):
         orientation=round_to_angle_multiples(orientation)
         finalImage = rotate(img, 180-orientation)
@@ -175,8 +175,9 @@ def preprocess(image_path):
     img = cv2.imread(image_path)
 
     # Salt and pepper noise
-    img=cv2.medianBlur(img,3)
+    img=cv2.medianBlur(img,5)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    display(img)
 
     # cv2.imshow('Detected Lines (Longest)', img)
     # Apply Canny edge detection
@@ -205,5 +206,5 @@ def preprocess(image_path):
   
 
 # # Example usage
-image_path = 'fonts-dataset\IBM Plex Sans Arabic\887.jpeg'
+image_path = '41.jpeg'
 preprocess(image_path)
