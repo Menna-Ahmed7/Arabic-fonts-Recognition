@@ -136,6 +136,7 @@ def rotate_img(img):
     # Apply Hough Lines Transform
     lines = cv2.HoughLinesP(img, rho=1, theta=np.pi/180, threshold=100, minLineLength=50, maxLineGap=10)
 
+    finalImage=img
     # Find the longest line
     longest_line = None
     max_length = 0
@@ -156,16 +157,15 @@ def rotate_img(img):
             else:
                 orientation = 180/2  # Vertical line (slope is undefined)
         
-    # print(orientation)
-    # Draw only the longest line (if any)
-    # if longest_line is not None:
-    #     x1, y1, x2, y2 = longest_line[0]
-    #     cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)  # Draw blue line with thickness 2
-    finalImage=img
-    print("oo",orientation)
-    if (orientation>20.0 or orientation<-20):
-        orientation=round_to_angle_multiples(orientation)
-        finalImage = rotate(img, 180-orientation)
+        # print(orientation)
+        # Draw only the longest line (if any)
+        # if longest_line is not None:
+        #     x1, y1, x2, y2 = longest_line[0]
+        #     cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)  # Draw blue line with thickness 2
+            print("oo",orientation)
+            if (orientation>20.0 or orientation<-20):
+                orientation=round_to_angle_multiples(orientation)
+                finalImage = rotate(img, 180-orientation)
 
     return finalImage
     # print(orientation)
@@ -177,7 +177,6 @@ def preprocess(image_path):
     # Salt and pepper noise
     img=cv2.medianBlur(img,5)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    display(img)
 
     # cv2.imshow('Detected Lines (Longest)', img)
     # Apply Canny edge detection
@@ -188,6 +187,7 @@ def preprocess(image_path):
     #Binarize the gradient image
     _, img = cv2.threshold(rotated_img, 50.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     # display(bw)
+    # display(img)
     
     #--morphological operations--
     #find the gradient map
@@ -206,5 +206,5 @@ def preprocess(image_path):
   
 
 # # Example usage
-image_path = '41.jpeg'
-preprocess(image_path)
+# image_path = '41.jpeg'
+# preprocess(image_path)
