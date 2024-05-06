@@ -132,11 +132,11 @@ def round_to_angle_multiples(number):
 #     main(filePath)
 import cv2
 import numpy as np
-def rotate_img(img):
+def rotate_img(edgeimage,originalimage):
     # Apply Hough Lines Transform
-    lines = cv2.HoughLinesP(img, rho=1, theta=np.pi/180, threshold=100, minLineLength=50, maxLineGap=10)
-
-    finalImage=img
+    lines = cv2.HoughLinesP(edgeimage, rho=1, theta=np.pi/180, threshold=100, minLineLength=50, maxLineGap=10)
+    
+    finalImage=originalimage
     # Find the longest line
     longest_line = None
     max_length = 0
@@ -159,7 +159,7 @@ def rotate_img(img):
             # print("oo",orientation)
             if (orientation>20.0 or orientation<-20):
                 orientation=round_to_angle_multiples(orientation)
-                finalImage = rotate(img, 180-orientation)
+                finalImage = rotate(originalimage, 180-orientation)
         
         # # print(orientation)
         # # Draw only the longest line (if any)
@@ -183,12 +183,15 @@ def preprocess(image_path):
     # Apply Canny edge detection
     edges = cv2.Canny(img, 50, 150)  # Adjust threshold values as needed
 
-    rotated_img=rotate_img(edges)
+    rotated_img=rotate_img(edges,img)
+    # display(img)
 
+    img=rotated_img
     # display(rotated_img)
+    # display(img)
 
     #Binarize the gradient image
-    _, img = cv2.threshold(rotated_img, 50.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    # _, img = cv2.threshold(rotated_img, 0.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     # display(bw)
     # display(img)
     
@@ -198,7 +201,7 @@ def preprocess(image_path):
     # grad = cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
 
     # display(img)
-    return img
+    # return img
     
 
 
@@ -209,5 +212,5 @@ def preprocess(image_path):
   
 
 # # Example usage
-# image_path = '41.jpeg'
-# preprocess(image_path)
+image_path = '17.jpeg'
+preprocess(image_path)
