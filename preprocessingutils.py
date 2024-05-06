@@ -30,8 +30,10 @@ def rotate(img, theta):
     M[0, 2] += bound_w/2 - image_center[0]
     M[1, 2] += bound_h/2 - image_center[1]
 
+    print(img[0][0])
     # rotate orignal image to show transformation
-    rotated = cv2.warpAffine(img,M,(bound_w,bound_h),borderValue=(0,0,0))
+    print(img[0][0])
+    rotated = cv2.warpAffine(img,M,(bound_w,bound_h),borderValue=(int(img[0][0]),int(img[0][0]),int(img[0][0])))
     return rotated
 
 
@@ -178,6 +180,8 @@ def preprocess(image_path):
     # Salt and pepper noise
     img=cv2.medianBlur(img,5)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    _, img = cv2.threshold(img, 100.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    # display(img)
 
     # cv2.imshow('Detected Lines (Longest)', img)
     # Apply Canny edge detection
@@ -191,7 +195,6 @@ def preprocess(image_path):
     # display(img)
 
     #Binarize the gradient image
-    # _, img = cv2.threshold(rotated_img, 0.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     # display(bw)
     # display(img)
     
@@ -200,8 +203,8 @@ def preprocess(image_path):
     # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2, 2))
     # grad = cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
 
-    # display(img)
-    # return img
+    display(img)
+    return img
     
 
 
@@ -212,5 +215,7 @@ def preprocess(image_path):
   
 
 # # Example usage
-image_path = '17.jpeg'
+image_path = '13.jpeg'
 preprocess(image_path)
+
+
