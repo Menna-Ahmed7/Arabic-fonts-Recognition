@@ -2,14 +2,6 @@
 import cv2
 import numpy as np
 from scipy.signal import convolve2d
-def display(img, frameName="OpenCV Image"):
-    
-    h, w = img.shape[0:2]
-    neww = 800
-    newh = int(neww*(h/w))
-    img = cv2.resize(img, (neww, newh))
-    cv2.imshow(frameName, img)
-    cv2.waitKey(0)
 def lpq(img_filepath, winSize=3,freqestim=1,mode='h'):
 
 	img = cv2.imread(img_filepath,0)
@@ -59,5 +51,3 @@ def lpq(img_filepath, winSize=3,freqestim=1,mode='h'):
 	# print (LPQdesc)
 	LPQdesc = np.array(LPQdesc)
 	return LPQdesc
-
-lpq("Processed-test/test/5.jpeg")
