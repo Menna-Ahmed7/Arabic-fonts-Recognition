@@ -14,17 +14,12 @@ import pickle
 import cv2
 import numpy as np
 from preprocessingunit import process_image,preprocess
+from PIL import Image
+
 app = Flask(__name__)
 CORS(app)
 
-def display(img, frameName="OpenCV Image"):
-    
-    h, w = img.shape[0:2]
-    neww = 800
-    newh = int(neww*(h/w))
-    img = cv2.resize(img, (neww, newh))
-    cv2.imshow(frameName, img)
-    cv2.waitKey(0)
+
 # model=pickle.load("Logistic Regression.pkl")
 with open('Logistic Regression.pkl', 'rb') as file:
     # Deserialize and load the object from the file
@@ -35,25 +30,26 @@ with open('Logistic Regression.pkl', 'rb') as file:
 @app.route("/image_3", methods=["POST"])
 def imagePrediction():
     file=request.files['image']
-    # img=Image.open(file.stream)
-    # img.save('uploaded_image.jpeg')
     img=cv2.imdecode(np.fromstring(file.read(), np.uint8), cv2.IMREAD_COLOR)
     # img=Image.open(file.stream)
+    # img=Image.open(file.stream)
     # img_path = join(app.config['PHOTO_PATH'], 'uploaded_image.jpeg')
-    # display(img)   
     # print(img) 
     # # Process the image
     proceseed_img=preprocess(img, True)
+    proceseed_img = Image.fromarray(proceseed_img)  # Convert to PIL Image object
+    proceseed_img.save('uploaded_image.jpeg')
 
-    # # # Load the preprocessed image (assuming it's saved)
+    # # # # Load the preprocessed image (assuming it's saved)
     # path="Processed-test/test/"+img
     # image = cv2.imread(path)
 
-    # # # Extract LPQ features or other processing if needed
-    imageLPQ = lpq(proceseed_img,b=True)  # Replace with your specific feature extraction logic
-    # # # Predict the label using your model
+    # # # # Extract LPQ features or other processing if needed
+    
+    imageLPQ = lpq('uploaded_image.jpeg')  # Replace with your specific feature extraction logic
+    # # # # Predict the label using your model
     label = model.predict(np.array([imageLPQ]))[0]
-    # return 
+    # # return 
     return jsonify({'label': str(label)})
 
 # check if the post request has the file part
@@ -67,6 +63,9 @@ def imagePrediction():
     #     user_file.save(path)
 
 # app.run(debug=True)
-app.run(host='0.0.0.0', port=5000)
+# app.run(host='0.0.0.0', port=5000)
+app.run(host='localhost', port=5000)
+
+
 
 
