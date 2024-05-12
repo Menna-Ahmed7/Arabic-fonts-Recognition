@@ -1,5 +1,8 @@
 # import cv2
 # import numpy as np
+from os.path import  join
+from PIL import Image
+
 
 debug = True
 
@@ -33,6 +36,7 @@ def rotate(img, theta):
     print(img[0][0])
     # rotate orignal image to show transformation
     print(img[0][0])
+
     rotated = cv2.warpAffine(img,M,(bound_w,bound_h),borderValue=(int(img[0][0]),int(img[0][0]),int(img[0][0])))
     return rotated
 
@@ -175,22 +179,33 @@ def rotate_img(edgeimage,originalimage):
 
 def preprocess(image_path):
     # Read the image
-    img = cv2.imread(image_path)
+    originalimg = cv2.imread(image_path)
 
     # Salt and pepper noise
-    img=cv2.medianBlur(img,5)
+    img=cv2.medianBlur(originalimg,5)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    _, img = cv2.threshold(img, 100.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     # display(img)
 
     # cv2.imshow('Detected Lines (Longest)', img)
     # Apply Canny edge detection
-    edges = cv2.Canny(img, 50, 150)  # Adjust threshold values as needed
+    edges = cv2.Canny(img, 20, 150)  # Adjust threshold values as needed
 
     rotated_img=rotate_img(edges,img)
     # display(img)
 
-    img=rotated_img
+    if (img[0][0]>200):
+        _, img = cv2.threshold(rotated_img, 50.0, 255.0, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+    else:
+        _, img = cv2.threshold(rotated_img, 50.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+
+
+    # binary_img=rotated_img
+    # contours, hierarchy = cv2.findContours(binary_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # cv2.drawContours(originalimg, contours, -1, (0, 255, 0), 2)  # Green color, thickness 2
+    # display(originalimg)
+    # binary_img=img
+
+    # img=rotated_img
     # display(rotated_img)
     # display(img)
 
@@ -203,7 +218,9 @@ def preprocess(image_path):
     # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2, 2))
     # grad = cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
 
-    display(img)
+    # display(img)
+    # display(originalimg)
+
     return img
     
 
@@ -215,7 +232,91 @@ def preprocess(image_path):
   
 
 # # Example usage
-image_path = '13.jpeg'
-preprocess(image_path)
+# image_path = '11.jpeg'
+# img=preprocess(image_path)
+##########OCR
+# import cv2
+# import pytesseract
+
+# # Load the image
+# img = cv2.imread('22.jpeg')
+
+# # Convert the image to grayscale
+# # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# # Use pytesseract to perform OCR and get bounding box coordinates
+# detections = pytesseract.image_to_data(img, output_type=pytesseract.Output.DICT)
+
+# print(detections)
+# # Iterate over each detection
+# prev=detections['top'][0]
+# for i, text in enumerate(detections['text']):
+#     # Skip empty detections
+#     if text.strip() == '':
+#         continue
+    
+#     if detections['top'][i] -  
+#     # Extract bounding box coordinates
+#     x, y, w, h = detections['left'][i], detections['top'][i], detections['width'][i], detections['height'][i]
+    
+#     # Extract the line image
+#     line_image = img[y:y+h, x:x+w]
+    
+#     # Save the line image
+#     cv2.imwrite(f'line_{i+1}.jpg', line_image)
 
 
+def extractImageLines(img,img_name,output_dir,img_path):
+    
+    #cv2.RETR_EXTERNAL retrieves only the outermost contours of connected regions.
+    contours, _ = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # Sorting contours by their start position in y just to be processed from top to bottom
+    contours = sorted(contours, key=lambda c: cv2.boundingRect(c)[1])
+
+    cur_line=[]
+    all_lines_found=[]
+    prev_y=-1
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+        #compare aspect ratio w/h and area to filter contours
+        aspect_ratio = w / h
+        # aspect_ratio = w / float(h)
+
+        area=cv2.contourArea(contour)
+        if aspect_ratio <8 and aspect_ratio>0.3 and area >90:
+        # if 0.1 < aspect_ratio < 10 and cv2.contourArea(contour) > 100:
+            # print("here")
+            #if valid contour check if it belongs to previous line or it is the first contotur tot work on
+            if prev_y == -1 or abs(prev_y - y) < 17:
+            # if  len(all_lines_found)==0 or abs(prev_y -y) <20:
+                cur_line.append(contour)
+            else:
+                all_lines_found.append(cur_line)
+                cur_line=[]
+                cur_line.append(contour)
+            prev_y=y
+
+    # For the last line
+    if cur_line:
+        all_lines_found.append(cur_line)
+    # print(all_lines_found)
+    #then we have 2d array where for each line we have array of contours
+    #we want to find bounding box for each line
+    index=0
+    for line in all_lines_found:
+        # print(index)
+        #concatenates all contours into single one
+        line_contours = np.concatenate(line)
+        x, y, w, h = cv2.boundingRect(line_contours)
+        new_img = img[y:y+h, x:x+w]
+        name=img_name+'_'+str(index+1)+'.jpeg'
+        image = Image.fromarray(new_img)  # Convert to PIL Image object
+        new_path = join(output_dir, name)
+    
+        # new_path = join(output_dir, name)
+        image.save(new_path)
+        # cv2.imwrite(f'{name}.jpeg', new_img)
+        index=index+1
+
+# extractImageLines(img,'11')
+# cv2.drawContours(img, lines, -1, (0, 255, 0), 2)  # Green color, thickness 2
