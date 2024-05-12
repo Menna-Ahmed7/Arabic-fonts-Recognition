@@ -66,6 +66,7 @@ def imagePrediction():
     #     path=os.path.join(os.getcwd()+'\\modules\\static\\'+user_file.filename)
     #     user_file.save(path)
 
-app.run(debug=True)
+# app.run(debug=True)
+app.run(host='0.0.0.0', port=5000)
 
 
