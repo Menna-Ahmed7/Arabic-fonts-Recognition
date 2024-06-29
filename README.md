@@ -7,23 +7,22 @@
 ## ⤵️ Description <a name = "description"></a>
 * This project tackles the challenging task of classifying Arabic fonts in images. It achieves an impressive accuracy of **97.25%** in distinguishing between different font types like Scheherazade New, Marhey, Lemonada, IBM Plex Sans Arabic, even when the text color, size, and orientation vary within the images.
 ## 🧩 Project Modules <a name = "project-modules"></a>
-### Preprocessing 
+### 1. Preprocessing 
 * After analyzing the images and identifying any noise or issues, the following preprocessing steps are applied:
     * Salt and pepper noise is removed using a median filter.
     * Images are converted to grayscale.
     * Rotating images only that need rotation.
         * This is done by identifying Hough lines in the image, extracting the longest line, and rotating the image based on the orientation of that line.
     * Finally, thresholding is applied to the images, resulting in nearly all images having a black background and white text.
-### Feature Extraction
+### 2. Feature Extraction
 * extract relevant features from images to distinguish between different fonts.
 * Used Local phase quantization.
-### Model Training 
+### 3. Model Training 
 * model is trained on the extracted features from training data.
-* Trying multiple models, achieving the best accuracy with the logistic regression model.
-  <br/>
+* Trying multiple models, achieved the best accuracy with the logistic regression model.
   ![image](https://github.com/Menna-Ahmed7/Neural-Project/assets/110634473/6519d940-71f7-4b56-b042-aff03b58c4e8)
 
-### Performance Analysis
+### 4. Performance Analysis
 * testing the model on test (unseen) data, and calculating the model accuracy. 
 ## ⚙️ How to use? <a name = "usage"></a>
 ### 🧱 Prerequisites:
