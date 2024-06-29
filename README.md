@@ -5,7 +5,7 @@
 - [⚙️ How to use?](#usage-)
 - [🏆 Contributors](#contributors-)
 ## ⤵️ Description <a name = "description"></a>
-* This project tackles the challenging task of classifying Arabic fonts in images. It achieves an impressive accuracy of **97.25%** in distinguishing between various font types, even when the text color, size, and orientation vary within the images.
+* This project tackles the challenging task of classifying Arabic fonts in images. It achieves an impressive accuracy of **97.25%** in distinguishing between different font types like Scheherazade New, Marhey, Lemonada, IBM Plex Sans Arabic, even when the text color, size, and orientation vary within the images.
 ## 🧩 Project Modules <a name = "project-modules"></a>
 ### Preprocessing 
 * After analyzing the images and identifying any noise or issues, the following preprocessing steps are applied:
